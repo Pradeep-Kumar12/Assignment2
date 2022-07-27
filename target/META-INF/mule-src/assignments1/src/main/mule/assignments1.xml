@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1490b86a-6b9d-4fd5-b265-2228eb607325" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="ac3289d9-2346-4dcf-8f50-e938693c99b8" >
+		<db:my-sql-connection host="sql6.freemysqlhosting.net" port="3306" user="sql6508535" password="8d6qqLT5HX" database="sql6508535" />
+	</db:config>
+	<flow name="assignments1Flow" doc:id="5dfc091a-9cc4-403e-a3e0-4bcc1741823c" >
+		<http:listener doc:name="Listener" doc:id="19011d57-66db-4da5-9459-f7668941c4cc" config-ref="HTTP_Listener_config" path="/test"/>
+		<db:select doc:name="Select" doc:id="845f86f0-8e29-4164-b779-3d7e67d5d743" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM Employee;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="b0a20480-2e44-468c-b32e-dae6fcbc227a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="a64801a0-b2e8-4f04-a557-504b04971dce" message="#[payload]"/>
+	</flow>
+</mule>
